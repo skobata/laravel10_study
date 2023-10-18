@@ -1,19 +1,20 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>書籍登録</title>
-</head>
-<body>
-<main>
+<x-layout.book-manager>
+    <x-slot:title>
+        書籍登録
+    </x-slot:title>
     <h1>書籍登録</h1>
+    @if($errors->any())
+        <x-alert class="danger">
+            <x-error-messages :$errors />
+        </x-alert>
+    @endif
     <form action="{{route('book.store')}}" method="post">
         @csrf
         <div>
             <label>カテゴリ</label>
             <select name="category_id">
                 @foreach($categories as $category)
-                    <option value="{{$category->id}}">
+                    <option value="{{$category->id}}" @selected(old('category_id') == $category->id)>
                         {{$category->title}}
                     </option>
                 @endforeach
@@ -21,14 +22,12 @@
         </div>
         <div>
             <label>title</label>
-            <input type="text" name="title"/>
+            <input type="text" name="title" value="{{old('title')}}"/>
         </div>
         <div>
             <label>price</label>
-            <input type="text" name="price"/>
+            <input type="text" name="price" value="{{old('price')}}"/>
         </div>
         <input type="submit" value="send">
     </form>
-</main>
-</body>
-</html>
+</x-layout.book-manager>
