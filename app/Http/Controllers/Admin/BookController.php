@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BookPostRequest;
+use App\Http\Requests\BookPutRequest;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
@@ -38,7 +39,11 @@ class BookController extends Controller
 
     public function create(): View
     {
-        return View('admin/book/create', ['categories' => Category::all()]);
+        $categories = Category::all();
+
+        $authors = Author::all();
+
+        return View('admin/book/create', compact('authors', 'categories'));
     }
 
     public function store(BookPostRequest $request): RedirectResponse
@@ -47,14 +52,42 @@ class BookController extends Controller
         $book->category_id = $request->category_id;
         $book->title = $request->title;
         $book->price = $request->price;
+
+        DB::transaction(function () use ($book, $request) {
+            $book->save();
+            $book->authors()->attach($request->author_ids);
+        });
         $book->save();
 
-        $authors = Author::inRandomOrder()->limit(2)->get();
-        $author_book_data = [];
-        foreach ($authors as $author) {
-            $author_book_data[] = ['book_id' => $book->id, 'author_id' => $author->id];
-        }
-        DB::table('author_book')->insert($author_book_data);
         return redirect(route('book.index'))->with('message', "「{$book->title}」を追加しました。");
+    }
+
+    public function edit(Book $book): View
+    {
+        $categories = Category::all();
+        $authors = Author::all();
+
+        $authorIds = $book->authors()->pluck('id')->all();
+
+        return view('admin.book.edit', compact('book', 'categories', 'authors', 'authorIds'));
+    }
+
+    public function update(BookPutRequest $request, Book $book): RedirectResponse
+    {
+        $book->category_id = $request->category_id;
+        $book->title = $request->title;
+        $book->price = $request->price;
+
+        DB::transaction(function () use ($book, $request) {
+            $book->update();
+            $book->authors()->sync($request->author_ids);
+        });
+        return redirect(route('book.index'))->with('message', "「{$book->title}」を変更しました。");
+    }
+
+    public function destroy(Book $book): RedirectResponse
+    {
+        $book->delete();
+        return redirect(route('book.index'))->with('message', "「{$book->title}」を削除しました。");
     }
 }

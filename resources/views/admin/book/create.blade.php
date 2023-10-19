@@ -10,24 +10,7 @@
     @endif
     <form action="{{route('book.store')}}" method="post">
         @csrf
-        <div>
-            <label>カテゴリ</label>
-            <select name="category_id">
-                @foreach($categories as $category)
-                    <option value="{{$category->id}}" @selected(old('category_id') == $category->id)>
-                        {{$category->title}}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label>title</label>
-            <input type="text" name="title" value="{{old('title')}}"/>
-        </div>
-        <div>
-            <label>price</label>
-            <input type="text" name="price" value="{{old('price')}}"/>
-        </div>
+        <x-book-form :$categories :$authors />
         <input type="submit" value="send">
     </form>
 </x-layout.book-manager>
