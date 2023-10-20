@@ -156,6 +156,7 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
+        App\Providers\DatabaseServiceProvider::class,
         /*
          * Package Service Providers...
          */

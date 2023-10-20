@@ -6,7 +6,12 @@
 </head>
 <body>
 <header>
-    書籍管理システム<hr>
+    書籍管理システム
+    <form method="POST" action="{{route('admin.destroy')}}">
+        @csrf
+        <input type="submit" value="ログアウト" />
+    </form>
+    <hr>
 </header>
 <main>
 {{ $slot }}
