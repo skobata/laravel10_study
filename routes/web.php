@@ -33,8 +33,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-Route::get('messages', [MessageController::class, 'index']);
+Route::get('messages', [MessageController::class, 'index'])->name('message.index');
 Route::post('messages', [MessageController::class, 'store']);
+Route::delete('messages/{id}/delete', [MessageController::class, 'destroy'])->name('message.destroy');
 
 Route::prefix('admin')->group(function() {
     Route::name('admin.')

@@ -14,7 +14,14 @@
     </form>
     <ul>
         @foreach($messages as $message)
-            <li>{{$message->body}}</li>
+            <li>
+                <form method="POST" action="{{route('message.destroy', ['id' => $message->id])}}">
+                    {{$message->body}}
+                    @csrf
+                    @method('DELETE')
+                    <input type="submit" value="削除">
+                </form>
+            </li>
         @endforeach
     </ul>
 </main>
